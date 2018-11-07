@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Phone
 //
-//  Created by Роман Машенькин on 07/11/2018.
+//  Created by Roman Mashenkin on 07/11/2018.
 //  Copyright © 2018 vXdesign.store. All rights reserved.
 //
 
