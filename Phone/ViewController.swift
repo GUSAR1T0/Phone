@@ -84,6 +84,12 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var buttonContacts: UIButton! {
+        didSet {
+            setupButton(buttonContacts)
+        }
+    }
+    
     @IBOutlet weak var buttonCall: UIButton! {
         didSet {
             setupButton(buttonCall)
