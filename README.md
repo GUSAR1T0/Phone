@@ -1,4 +1,4 @@
-# Phone - Swift/iOS 12.0
+# Phone
 
 Simple application on Swift for iOS 12.0: _get phone number and make call_.
 
