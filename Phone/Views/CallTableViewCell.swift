@@ -15,10 +15,8 @@ class CallTableViewCell: UITableViewCell {
 
     func setCall(_ call: Call) {
         nameLabel.text = call.contact?.name ?? call.phoneNumber
-
         let formatter = DateFormatter()
-//        formatter.dateFormat = "hh:mm dd/MMM"
-        formatter.dateStyle = .short
+        formatter.dateStyle = .none // can be used - "hh:mm dd/MMM"
         formatter.timeStyle = .short
         timeLabel.text = formatter.string(from: call.time ?? Date())
     }

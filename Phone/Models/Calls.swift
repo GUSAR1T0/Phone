@@ -11,14 +11,32 @@ import CoreData
 
 class Calls: NSObject {
 
-    private static var _calls: [Call] = []
+    private static var calls: [Call] = []
     static var needsUpdate = true
-    static var calls: [Call] {
+    static var callsDict: [String: [Call]] {
+        return initValues()
+    }
+
+    static func initValues() -> [String: [Call]] {
         if needsUpdate {
-            return fetchData()
-        } else {
-            return _calls
+            calls = fetchData()
         }
+
+        let formatter = DateFormatter()
+        formatter.dateStyle = .full
+        formatter.timeStyle = .none
+
+        var callsDict: [String: [Call]] = [:]
+        for call in calls {
+            let keys = Array(callsDict.keys)
+            let key = formatter.string(from: call.time ?? Date())
+            if keys.contains(key) {
+                callsDict[key]?.append(call)
+            } else {
+                callsDict[key] = [call]
+            }
+        }
+        return callsDict
     }
 
     static func fetchData() -> [Call] {
@@ -29,13 +47,28 @@ class Calls: NSObject {
         let context = applicationDelegate.persistentContainer.viewContext
         let request = Call.fetchRequest() as NSFetchRequest<Call>
 
+        var calls: [Call] = []
         do {
-            _calls = try context.fetch(request)
+            calls = try context.fetch(request)
             needsUpdate = false
-            return _calls
         } catch {
-            return []
+            return calls
         }
+
+        let contactsRequest = Contact.fetchRequest() as NSFetchRequest<Contact>
+        for call in calls {
+            contactsRequest.predicate = NSPredicate(format: "phoneNumber = %@", call.phoneNumber!)
+            do {
+                let contacts = try context.fetch(contactsRequest)
+                if let contact = contacts.first, contact != call.contact {
+                    call.contact = contact
+                    try context.save()
+                }
+            } catch {
+            }
+        }
+
+        return calls
     }
 
     static func add(_ phoneNumber: String, _ time: Date) {
@@ -44,19 +77,37 @@ class Calls: NSObject {
         }
 
         let context = applicationDelegate.persistentContainer.viewContext
-        let contactsRequest = Contact.fetchRequest() as NSFetchRequest<Contact>
-        contactsRequest.predicate = NSPredicate(format: "phoneNumber = %@", phoneNumber)
 
         do {
-            let contacts = try context.fetch(contactsRequest)
             let callToAdd = Call(context: context)
-            if let contact = contacts.first {
-                callToAdd.contact = contact
-            }
-
             callToAdd.phoneNumber = phoneNumber
             callToAdd.time = time
+            try context.save()
+            needsUpdate = true
+        } catch {
+            return
+        }
+    }
 
+    static func get(in section: Int?) -> [Call]? {
+        let key = Array(callsDict.keys)[section!]
+        return callsDict[key]
+    }
+
+    static func get(in section: Int?, at row: Int?) -> Call {
+        return get(in: section)![row!]
+    }
+
+    static func remove(_ section: Int, _ row: Int) {
+        guard let applicationDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+
+        let context = applicationDelegate.persistentContainer.viewContext
+        let contact = get(in: section, at: row)
+        context.delete(contact)
+
+        do {
             try context.save()
             needsUpdate = true
         } catch {

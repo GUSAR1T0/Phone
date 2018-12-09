@@ -28,17 +28,30 @@ class RecentViewController: UITableViewController {
 
     // MARK: - Table view data source
 
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return Calls.callsDict.keys.count
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Calls.calls.count
+        return Calls.get(in: section)?.count ?? 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CallTableViewCell", for: indexPath) as! CallTableViewCell
-
-        let call = Calls.calls[indexPath.row]
+        let call = Calls.get(in: indexPath.section, at: indexPath.row)
         cell.setCall(call)
-
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return Array(Calls.callsDict.keys)[section]
+    }
+
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            Calls.remove(indexPath.section, indexPath.row)
+            tableView.reloadData()
+        }
     }
 
     /*

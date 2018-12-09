@@ -11,15 +11,14 @@ import CoreData
 
 class Contacts {
 
+    private static var contacts: [Contact] = []
     static var needsUpdate = true
-    static var contacts: [Contact] = []
     static var contactsDict: [String: [Contact]] {
         return initValues()
     }
 
     static func initValues() -> [String: [Contact]] {
         if needsUpdate {
-            needsUpdate = false
             contacts = fetchData()
         }
 
@@ -46,6 +45,7 @@ class Contacts {
 
         do {
             let contacts = try context.fetch(request)
+            needsUpdate = false
             return contacts
         } catch {
             return []
@@ -65,6 +65,7 @@ class Contacts {
         do {
             try context.save()
             needsUpdate = true
+            Calls.needsUpdate = true
         } catch {
             return
         }
@@ -80,6 +81,7 @@ class Contacts {
         do {
             try context.save()
             needsUpdate = true
+            Calls.needsUpdate = true
         } catch {
             return
         }
@@ -106,6 +108,7 @@ class Contacts {
         do {
             try context.save()
             needsUpdate = true
+            Calls.needsUpdate = true
         } catch {
             return
         }
