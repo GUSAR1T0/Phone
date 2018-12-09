@@ -1,14 +1,14 @@
 //
-//  CallsViewController.swift
+//  RecentViewController.swift
 //  Phone
 //
-//  Created by Роман Машенькин on 04/12/2018.
+//  Created by Roman Mashenkin on 04/12/2018.
 //  Copyright © 2018 vXdesign.store. All rights reserved.
 //
 
 import UIKit
 
-class CallsViewController: UITableViewController {
+class RecentViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,27 +20,26 @@ class CallsViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        tableView.reloadData()
+    }
+
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return Calls.calls.count
     }
 
-    /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CallTableViewCell", for: indexPath) as! CallTableViewCell
 
-        // Configure the cell...
+        let call = Calls.calls[indexPath.row]
+        cell.setCall(call)
 
         return cell
     }
-    */
 
     /*
     // Override to support conditional editing of the table view.

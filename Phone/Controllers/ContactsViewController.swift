@@ -14,6 +14,12 @@ class ContactsViewController: UITableViewController {
         super.viewDidLoad()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        tableView.reloadData()
+    }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return Contacts.contactsDict.keys.count
     }
